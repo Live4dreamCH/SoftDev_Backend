@@ -11,13 +11,13 @@ import (
 func LogIn(c *gin.Context) {
 	var u obj.User
 	if err := c.ShouldBindJSON(&u); err != nil {
-		c.JSON(400, gin.H{"res": "NO", "reason": "wrong json format!"})
+		c.JSON(400, gin.H{"Res": "NO", "Reason": "wrong json format!"})
 		return
 	}
 
 	suss, valid_name, u_id := u.LogIn(u.Name, u.Psw)
 	if !suss {
-		res := gin.H{"res": "NO", "Reason": ""}
+		res := gin.H{"Res": "NO", "Reason": ""}
 		if !valid_name {
 			res["Reason"] = "UserName"
 		} else {
@@ -26,7 +26,7 @@ func LogIn(c *gin.Context) {
 		c.JSON(http.StatusOK, res)
 	} else {
 		sid := sid_manager.set(u_id)
-		c.JSON(http.StatusOK, gin.H{"res": "OK", "SessionID": sid})
+		c.JSON(http.StatusOK, gin.H{"Res": "OK", "SessionID": sid})
 		log.Println("login suss: uid=", u_id, "SessionID=", sid)
 	}
 }
