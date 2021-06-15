@@ -8,29 +8,35 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type GetAct_json struct {
-	Sid   string `json:"SessionID" binding:"required"`
-	ActID int    `json:"Actid" binding:"required"`
+type GreateAct_json struct {
+	Sid    string   `json:"SessionID" binding:"required"`
+	Name   string   `json:"ActName" binding:"required"`
+	Len    int      `json:"Length" binding:"required"`
+	Des    string   `json:"Description" binding:"required"`
+	Period []string `json:"OrgPeriods" binding:"required"`
 }
 
-func (j *GetAct_json) json2Act() (a obj.Act, err error) {
+func (j *GreateAct_json) json1Act() (a obj.Act, err error) {
 	uid, err := sid_manager.get(j.Sid)
 	if err != nil {
 		return
 	}
-	a.Aid = j.ActID
 	a.Uid = uid
+	a.Name = j.Name
+	a.Len = j.Len
+	a.Des = j.Des
+	a.Period = j.Period
 	return
 }
 
-func OrgGetAct(c *gin.Context) {
-	var j GetAct_json
+func CreateAct(c *gin.Context) {
+	var j GreateAct_json
 	var a obj.Act
 	if err := c.ShouldBindJSON(&j); err != nil {
 		c.JSON(400, gin.H{"Res": "NO", "Reason": "wrong json format!"})
 		return
 	}
-	j.json2Act()
+	a, _ = j.json1Act()
 	suss, aid := a.Create(a.Uid, a.Name, a.Len, a.Des, a.Period)
 	if !suss {
 		res := gin.H{"Res": "NO", "Reason": "Data type does not match"}

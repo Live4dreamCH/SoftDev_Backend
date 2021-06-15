@@ -26,6 +26,7 @@ func main() {
 	r := gin.Default()
 	r.POST("/SignUp", SignUp)
 	r.POST("/LogIn", LogIn)
+	r.POST("/CreateAct", CreateAct)
 	err := r.Run(":8140")
 	if err != nil {
 		panic(err)
