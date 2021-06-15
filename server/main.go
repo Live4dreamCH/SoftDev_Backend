@@ -15,6 +15,7 @@ func init() {
 	log.SetPrefix("LOG: ")
 	log.SetFlags(log.Ldate | log.Ltime | log.Llongfile)
 	sid_manager.m = make(map[string]int)
+	//print()
 }
 
 func main() {
