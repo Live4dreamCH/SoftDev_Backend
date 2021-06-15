@@ -2,15 +2,14 @@ package db
 
 import (
 	"database/sql"
-	"log"
 )
 
 // 预编译语句
 var (
 	a_search_u *sql.Stmt
-	a_search *sql.Stmt
-	a_create *sql.Stmt
-	a_update  *sql.Stmt
+	a_search   *sql.Stmt
+	a_create   *sql.Stmt
+	a_update   *sql.Stmt
 )
 
 func init() {
@@ -20,7 +19,7 @@ func init() {
 		`select count(*)
 		from act
 		where act_id = ?`)
-	check(err)    
+	check(err)
 	a_create, err = dbp.Prepare(
 		`insert into act(act_id, org_id,act_name,act_len,act_des,act_stop)
 		values (?, ?, ?, ?, ?, ?)`)
@@ -31,4 +30,3 @@ func init() {
 		where act_id = ? `)
 	check(err)
 }
-
