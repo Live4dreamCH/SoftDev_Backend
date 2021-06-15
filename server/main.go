@@ -27,6 +27,7 @@ func main() {
 	r.POST("/SignUp", SignUp)
 	r.POST("/LogIn", LogIn)
 	r.POST("/CreateAct", CreateAct)
+	r.POST("/OrgGetAct", OrgGetAct)
 	err := r.Run(":8140")
 	if err != nil {
 		panic(err)
