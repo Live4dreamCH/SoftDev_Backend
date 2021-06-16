@@ -18,4 +18,14 @@ values (?, ?, ?, ?, ?, ?);
 
 update act
 set act_stop=? ,act_final=?
-where act_id = ?
+where act_id = ?;
+
+select org_period, count(u_id)
+from act_period,vote
+where act_id=? and act_period.period_id=vote.period_id
+group by org_period;
+
+select count(*)
+from act,act_period
+where act.act_id=? and org_id=? and act_period.org_period=? and act.act_id=act_period.act_id
+
