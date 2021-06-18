@@ -9,6 +9,7 @@ import (
 var (
 	a_search_u       *sql.Stmt
 	a_search         *sql.Stmt
+	a_search_aid     *sql.Stmt
 	a_search_aid_uid *sql.Stmt
 	a_search_vote    *sql.Stmt
 	a_search_period  *sql.Stmt
@@ -21,6 +22,11 @@ func init() {
 	var err error
 
 	a_search, err = dbp.Prepare(
+		`select count(*)
+		from act
+		where act_id = ?`)
+	check(err)
+	a_search_aid, err = dbp.Prepare(
 		`select count(*)
 		from act
 		where act_id = ?`)
@@ -65,11 +71,13 @@ func (a *DB_act) Search(act_id int) (count int, err error) {
 	return
 }
 
+func (a *DB_act) Search_aid(act_id int) (count int, err error) {
+	err = a_search_aid.QueryRow(act_id).Scan(&count)
+	return
+}
+
 func (a *DB_act) Search_aid_uid(act_id int, org_id int) (count int, err error) {
 	err = a_search_aid_uid.QueryRow(act_id, org_id).Scan(&count)
-	if err != nil {
-		return
-	}
 	return
 }
 

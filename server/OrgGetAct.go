@@ -25,21 +25,25 @@ func (j *GetAct_json) json2Act() (a obj.Act, err error) {
 
 func OrgGetAct(c *gin.Context) {
 	var j GetAct_json
-	var a obj.Act
 	var period []string
 	var vote []int
-	var suss bool
 	if err := c.ShouldBindJSON(&j); err != nil {
 		c.JSON(400, gin.H{"Res": "NO", "Reason": "wrong json format!"})
 		return
 	}
-	a, _ = j.json2Act()
-	suss, period, vote = a.Search_vote(a.Aid, a.Uid)
-	if !suss {
-		res := gin.H{"Res": "NO", "Reason": "Aid or Uid has problem"}
-		c.JSON(http.StatusOK, res)
-	} else {
+
+	a, err := j.json2Act()
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{"Res": "NO", "Reason": "SessionID"})
+		return
+	}
+
+	period, vote, err = a.Search_vote(a.Aid, a.Uid)
+	if err == nil {
 		c.JSON(http.StatusOK, gin.H{"Res": "OK", "AvlbPeriods": period, "Votes": vote})
-		log.Println("check vote suss")
+		log.Println("check vote err")
+	} else {
+		res := gin.H{"Res": "NO", "Reason": err.Error()}
+		c.JSON(http.StatusOK, res)
 	}
 }

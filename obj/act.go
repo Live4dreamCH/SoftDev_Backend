@@ -1,6 +1,7 @@
 package obj
 
 import (
+	"errors"
 	"log"
 	"math/rand"
 
@@ -52,20 +53,35 @@ func get_aid() int {
 }
 
 //查询投票数
-func (a *Act) Search_vote(aid int, uid int) (suss bool, period []string, vote []int) {
+func (a *Act) Search_vote(aid int, uid int) (period []string, vote []int, err error) {
 	var dba db.DB_act
-	count, err := dba.Search_aid_uid(aid, uid)
+	count, err := dba.Search_aid(aid)
 	if err != nil {
+		log.Println(err)
 		return
 	}
 	if count == 0 {
-		log.Println("Aid Uid mismatching ")
-	}
-	period, vote, err = dba.Search_vote(aid)
-	if err != nil {
+		log.Println("Aid lost", aid)
+		err = errors.New("ActID")
 		return
 	}
-	suss = true
+
+	count, err = dba.Search_aid_uid(aid, uid)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if count == 0 {
+		log.Println("Aid Uid mismatching ", aid, uid)
+		err = errors.New("Auth")
+		return
+	}
+
+	period, vote, err = dba.Search_vote(aid)
+	if err != nil {
+		log.Println(err)
+		return
+	}
 	return
 }
 
