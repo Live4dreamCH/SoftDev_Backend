@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type GreateAct_json struct {
+type CreateAct_json struct {
 	Sid    string   `json:"SessionID" binding:"required"`
 	Name   string   `json:"ActName" binding:"required"`
 	Len    int      `json:"Length" binding:"required"`
@@ -16,7 +16,7 @@ type GreateAct_json struct {
 	Period []string `json:"OrgPeriods" binding:"required"`
 }
 
-func (j *GreateAct_json) json1Act() (a obj.Act, err error) {
+func (j *CreateAct_json) json2Act() (a obj.Act, err error) {
 	uid, err := sid_manager.get(j.Sid)
 	if err != nil {
 		return
@@ -30,13 +30,18 @@ func (j *GreateAct_json) json1Act() (a obj.Act, err error) {
 }
 
 func CreateAct(c *gin.Context) {
-	var j GreateAct_json
-	var a obj.Act
+	var j CreateAct_json
 	if err := c.ShouldBindJSON(&j); err != nil {
 		c.JSON(400, gin.H{"Res": "NO", "Reason": "wrong json format!"})
 		return
 	}
-	a, _ = j.json1Act()
+
+	a, err := j.json2Act()
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{"Res": "NO", "Reason": "SessionID"})
+		return
+	}
+
 	suss, aid := a.Create(a.Uid, a.Name, a.Len, a.Des, a.Period)
 	if !suss {
 		res := gin.H{"Res": "NO", "Reason": "Data type does not match"}

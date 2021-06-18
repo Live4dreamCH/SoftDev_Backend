@@ -26,6 +26,7 @@ func (a *Act) Create(uid int, name string, len int, des string, period []string)
 		aid = get_aid()
 		count, err := dba.Search(aid)
 		if err != nil {
+			log.Println("search aid err", err)
 			return
 		}
 		if count == 0 {

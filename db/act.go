@@ -62,9 +62,6 @@ type DB_act struct{}
 
 func (a *DB_act) Search(act_id int) (count int, err error) {
 	err = a_search.QueryRow(act_id).Scan(&count)
-	if err != nil {
-		return
-	}
 	return
 }
 
