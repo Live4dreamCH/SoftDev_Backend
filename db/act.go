@@ -105,9 +105,6 @@ func (a *DB_act) Search_vote(act_id int) (period []string, vote []int, err error
 //查找aid,uid,period对应的记录在不在
 func (a *DB_act) Search_period(act_id int, org_id int, org_period string) (count int, err error) {
 	err = a_search_period.QueryRow(act_id, org_id, org_period).Scan(&count)
-	if err != nil {
-		return
-	}
 	return
 }
 

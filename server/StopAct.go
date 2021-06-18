@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/Live4dreamCH/SoftDev_Backend/obj"
@@ -14,7 +13,7 @@ type StopAct_json struct {
 	FinalPeriods string `json:"FinalPeriods" binding:"required"`
 }
 
-func (j *StopAct_json) json3Act() (a obj.Act, err error) {
+func (j *StopAct_json) json2Act() (a obj.Act, err error) {
 	uid, err := sid_manager.get(j.Sid)
 	if err != nil {
 		return
@@ -27,18 +26,22 @@ func (j *StopAct_json) json3Act() (a obj.Act, err error) {
 
 func StoptAct(c *gin.Context) {
 	var j StopAct_json
-	var a obj.Act
 	if err := c.ShouldBindJSON(&j); err != nil {
 		c.JSON(400, gin.H{"Res": "NO", "Reason": "wrong json format!"})
 		return
 	}
-	a, _ = j.json3Act()
-	suss, aid := a.Stop_act(a.Aid, a.Uid, a.Final)
-	if !suss {
-		res := gin.H{"Res": "NO", "Reason": "SessionID/ActID/Periods/Auth has problem"}
-		c.JSON(http.StatusOK, res)
-	} else {
+
+	a, err := j.json2Act()
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{"Res": "NO", "Reason": "SessionID"})
+		return
+	}
+
+	err = a.Stop_act(a.Aid, a.Uid, a.Final)
+	if err == nil {
 		c.JSON(http.StatusOK, gin.H{"Res": "OK"})
-		log.Println("stop act,the Actid is:", aid)
+	} else {
+		res := gin.H{"Res": "NO", "Reason": err.Error()}
+		c.JSON(http.StatusOK, res)
 	}
 }

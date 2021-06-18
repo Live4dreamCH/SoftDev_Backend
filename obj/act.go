@@ -55,6 +55,9 @@ func get_aid() int {
 //查询投票数
 func (a *Act) Search_vote(aid int, uid int) (period []string, vote []int, err error) {
 	var dba db.DB_act
+	period = make([]string, 0)
+	vote = make([]int, 0)
+
 	count, err := dba.Search_aid(aid)
 	if err != nil {
 		log.Println(err)
@@ -86,21 +89,47 @@ func (a *Act) Search_vote(aid int, uid int) (period []string, vote []int, err er
 }
 
 //活动发起者敲定最终时间
-func (a *Act) Stop_act(aid int, uid int, Final string) (suss bool, aid_return int) {
+func (a *Act) Stop_act(aid int, uid int, Final string) (err error) {
 	var dba db.DB_act
-	aid_return = aid
-	count, err := dba.Search_period(aid, uid, Final)
+
+	count, err := dba.Search_aid(aid)
 	if err != nil {
+		log.Println(err)
 		return
 	}
 	if count == 0 {
-		log.Println("Aid Uid or Period mismatching ")
+		log.Println("Aid lost", aid)
+		err = errors.New("ActID")
 		return
 	}
-	suss, err = dba.Update_final(aid, Final)
+
+	count, err = dba.Search_aid_uid(aid, uid)
 	if err != nil {
+		log.Println(err)
 		return
 	}
-	suss = true
+	if count == 0 {
+		log.Println("Aid Uid mismatching ", aid, uid)
+		err = errors.New("Auth")
+		return
+	}
+
+	count, err = dba.Search_period(aid, uid, Final)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if count == 0 {
+		log.Println("Period mismatching ", Final)
+		err = errors.New("Periods")
+		return
+	}
+
+	_, err = dba.Update_final(aid, Final)
+	if err != nil {
+		log.Println("Update_final ", err)
+		return
+	}
+	log.Println("stop act,the ActID is:", aid)
 	return
 }
