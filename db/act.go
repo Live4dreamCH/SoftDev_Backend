@@ -84,6 +84,8 @@ func (a *DB_act) Search_aid_uid(act_id int, org_id int) (count int, err error) {
 func (a *DB_act) Search_vote(act_id int) (period []string, vote []int, err error) {
 	var count int
 	var period_temp string
+	period = make([]string, 0)
+	vote = make([]int, 0)
 	rows, err := a_search_vote.Query(act_id)
 	if err != nil {
 		return

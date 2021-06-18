@@ -41,8 +41,8 @@ func OrgGetAct(c *gin.Context) {
 	period, vote, err = a.Search_vote(a.Aid, a.Uid)
 	if err == nil {
 		c.JSON(http.StatusOK, gin.H{"Res": "OK", "AvlbPeriods": period, "Votes": vote})
-		log.Println("check vote err")
 	} else {
+		log.Println("check vote err")
 		res := gin.H{"Res": "NO", "Reason": err.Error()}
 		c.JSON(http.StatusOK, res)
 	}
