@@ -44,3 +44,7 @@ select org_period,period_id
 from act,act_period
 where act_id = ? and act.act_id == act_period.act_id //query
 */
+
+select ap.period_id
+from act_period ap
+where ap.act_id = ? and ap.org_period = ?

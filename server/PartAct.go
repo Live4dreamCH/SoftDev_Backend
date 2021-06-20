@@ -15,25 +15,27 @@ type PartGetAct_json struct { //Participant
 
 func PartAct(c *gin.Context) {
 	var u obj.User
-	var uid,actid int
+	var uid, actid int
 	var period []string
 	var ptemp PartGetAct_json
 	var err error
 	if err = c.ShouldBindJSON(&ptemp); err != nil {
-		c.JSON(400, gin.H{"Res": "NO", "Reason": "Sid/ActID/PartPeriods format wrong!"})
+		c.JSON(400, gin.H{"Res": "NO", "Reason": "wrong json format!"})
 		return
 	}
+
 	uid, err = sid_manager.get(ptemp.Sid)
 	if err != nil {
+		c.JSON(http.StatusOK, gin.H{"Res": "NO", "Reason": "SessionID"})
 		return
 	}
-	actid=ptemp.ActID
-	period=ptemp.PartPeriods
+
+	actid = ptemp.ActID
+	period = ptemp.PartPeriods
 	suss, msg := u.PartAct(uid, actid, period)
 	if !suss {
 		c.JSON(http.StatusOK, gin.H{"Res": "NO", "Reason": msg})
 	} else {
 		c.JSON(http.StatusOK, gin.H{"Res": "OK"})
 	}
-	return
 }

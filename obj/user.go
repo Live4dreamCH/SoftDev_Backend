@@ -4,7 +4,6 @@ import (
 	"log"
 
 	"github.com/Live4dreamCH/SoftDev_Backend/db"
-	//"db" //github.com/Live4dreamCH/SoftDev_Backend/
 )
 
 type User struct {
@@ -44,59 +43,46 @@ func (u *User) LogIn(name string, psw string) (suss bool, valid_name bool, u_id 
 		log.Println("username=", name, "psw=", psw, "login fail")
 		return
 	}
-	suss=true
+	suss = true
 	return
 }
 
-//调用时：suss, msg := u.PartAct(uid, ptemp.ActID, ptemp.PartPeriods)
 func (u *User) PartAct(uid int, ActID int, PartPeriods []string) (suss bool, msg string) {
 	var dbu db.DB_user
-	act_stop, _, err := dbu.ActivityQuery(ActID) //act_len
+	var dba db.DB_act
+	act_stop, _, err := dba.ActivityQuery(ActID) //act_len
 	if err != nil {
 		log.Println("ActID=", ActID, "ActID not found")
 		msg = "ActID" //"ActID not found"
-		suss = false
 		return
 	}
 	if act_stop {
 		log.Println("ActID=", ActID, "ActID stop!")
 		msg = "Stopped" //此活动已停止投票
-		suss = false
 		return
 	}
-	//var dbu2 db.DB_user
-	//PeriodQuery(ActID int) (num int, period []string, err error)
-	_, period, Periodid, err := dbu.PeriodQuery(ActID) //num
-	if err != nil {
-		log.Println("ActID=", ActID, "ActID does not have periods")
-		msg = "ActID" //"ActID not found"
-		suss = false
-		return suss, msg
-	}
-	var i int
-	for i = 0; i < len(PartPeriods); i++ { //判别请求列出的活动时间是否合理
-		for j := 0; j < len(period); j++ {
-			if PartPeriods[i] == period[j] {
-				break
-			}
-			if j == len(period) {
-				break
-			}
+
+	// 1. 检查period参数的正确性,不正确则退出
+	// 2. 用period换PartPeriodID
+	PartPeriodID := make([]int, len(PartPeriods))
+	i := 0
+	for _, p := range PartPeriods {
+		pid, err := dba.GetPeriodID(ActID, p)
+		if err != nil {
+			log.Println("period", p, "from PartAct.PartPeriods not in ActID", ActID, "err=", err)
+			msg = "Periods"
+			return
 		}
+		PartPeriodID[i] = pid
+		i++
 	}
 
-	if i < len(PartPeriods) {
-		suss = false
-		msg = "Periods"
-		return suss, msg
-	}
 	//请求列出的活动时间都在组织者活动时间列表中
 	//插入参与活动的记录
-	err = dbu.Createvote(uid, ActID, Periodid)
+	err = dbu.CreateVote(uid, ActID, PartPeriodID)
 	if err != nil {
-		log.Println("ActID=", ActID, "ActID cannot add vote")
-		msg = "Periods" //"ActID not found"
-		suss = false
+		log.Println("ActID", ActID, "cannot add voter", uid)
+		msg = "insert fail" //"ActID not found"
 		return
 	}
 	suss = true
