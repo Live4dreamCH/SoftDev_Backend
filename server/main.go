@@ -24,11 +24,16 @@ func init() {
 
 func main() {
 	r := gin.Default()
+	//活动发起者
 	r.POST("/SignUp", SignUp)
 	r.POST("/LogIn", LogIn)
 	r.POST("/CreateAct", CreateAct)
 	r.POST("/OrgGetAct", OrgGetAct)
 	r.POST("/StopAct", StoptAct)
+	//活动参与者三个函数
+	r.POST("/GetActs", GetActs)
+	r.POST("/PartAct", PartAct)
+	r.POST("/GetAct", GetAct)
 	err := r.Run(":8140")
 	if err != nil {
 		panic(err)

@@ -26,7 +26,7 @@ func init() {
 		psw = psw[:len(psw)-2]
 	}
 
-	dbp, err = sql.Open("mysql", "root:jsj86_mhq_lch@tcp(114.116.234.101:3306)/app")
+	dbp, err = sql.Open("mysql", "root:"+psw+"@/app?charset=utf8")
 	check(err)
 	err = dbp.Ping()
 	check(err)

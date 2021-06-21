@@ -133,3 +133,57 @@ func (a *Act) Stop_act(aid int, uid int, Final string) (err error) {
 	log.Println("stop act,the ActID is:", aid)
 	return
 }
+
+func (a *Act) GetAct(act_id int) (suss bool, act Act) {
+	var dba db.DB_act
+	act_stop, act_len, org_id, act_des, act_name, act_final, err := dba.ActinfoQuery(act_id)
+	if err != nil {
+		return
+	}
+	act.Aid = act_id
+	act.Des = act_des
+	act.Len = act_len
+	act.Uid = org_id
+	act.Name = act_name
+	act.Stop = act_stop
+	if act_stop {
+		act.Period = append(act.Period, act_final)
+		suss = true
+		return
+	} else {
+		period, err := dba.PeriodQuery(act_id)
+		if err != nil {
+			return
+		}
+		act.Period = make([]string, len(period))
+		i := 0
+		for p := range period {
+			act.Period[i] = p
+			i++
+		}
+		suss = true
+		return
+	}
+}
+
+func (a *Act) GetActs(uid int) (suss bool, actlist []Act) {
+	var i int
+	var actidlist []int
+	var tempact Act
+	var dbu db.DB_act
+	actidlist, err := dbu.OnepersonActQuery(uid) //act_len
+	if err != nil {
+		log.Println("uid=", uid, "uid doesn't have activity")
+		suss = false
+		return
+	}
+	for i = 0; i < len(actidlist); i++ {
+		suss, tempact = a.GetAct(actidlist[i])
+		if !suss {
+			return
+		}
+		actlist = append(actlist, tempact)
+	}
+	suss = true
+	return
+}
