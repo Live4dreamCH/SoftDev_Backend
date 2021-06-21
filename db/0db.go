@@ -55,6 +55,11 @@ func init() {
 	err = dbp.Ping()
 	check(err)
 
+	a_search, err = dbp.Prepare(
+		`select count(*)
+		from act
+		where act_id = ?`)
+	check(err)
 	a_searchall, err = dbp.Prepare(
 		`select act_stop,act_len,org_id,act_des,act_name, act_final
 		from act
@@ -90,6 +95,11 @@ func init() {
 	a_create_period, err = dbp.Prepare(
 		`insert into act_period(act_id, org_period)
 		values (?, ?)`)
+	check(err)
+	a_update, err = dbp.Prepare(
+		`update act
+		set act_stop=? ,act_final=?
+		where act_id = ? `)
 	check(err)
 	a_searchact, err = dbp.Prepare(
 		`select act_id
