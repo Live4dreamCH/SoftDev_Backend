@@ -55,7 +55,7 @@ func GetActs(c *gin.Context) {
 
 	uid, err := sid_manager.get(getsect.Sid)
 	if err != nil {
-		c.JSON(400, gin.H{"Res": "NO", "Reason": "SessionID"}) //msg = "SessionID" //"SessionID invalid"
+		c.JSON(http.StatusOK, gin.H{"Res": "NO", "Reason": "SessionID"}) //msg = "SessionID" //"SessionID invalid"
 		return
 	}
 

@@ -240,11 +240,12 @@ HTTP路由为POST /PartAct
 ```json
 {
     "Res": "NO",
-    "Reason": "ActID/Periods/Stopped/Parted"
+    "Reason": "SessionID/ActID/Periods/Stopped/Parted"
 }
 ```
 
-"Reason"项为"ActID"时表示无此活动号，
+"Reason"项为"SessionID"时表示此SessionID无效，
+为"ActID"时表示无此活动号，
 为"Periods"时表示时间格式不对/时间不在发起者规定的范畴内，
 为"Stopped"表示此活动已停止投票，
 为"Parted"表示此用户已参加过此活动，拒绝重复投票。
