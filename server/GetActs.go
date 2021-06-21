@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/Live4dreamCH/SoftDev_Backend/obj"
@@ -34,6 +35,14 @@ func (r *ResAct) Act2ResAct(a obj.Act) {
 		r.Stop = 0
 	}
 	r.Period = a.Period
+	for i := range r.Period {
+		backfix := r.Period[i][len(r.Period[i])-3 : len(r.Period[i])]
+		if backfix == ":00" {
+			r.Period[i] = r.Period[i][:len(r.Period[i])-3]
+		} else {
+			log.Println("strip wrong! origin time str = ", r.Period[i], "; not ended with ':00'")
+		}
+	}
 }
 
 func GetActs(c *gin.Context) {
