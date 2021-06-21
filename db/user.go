@@ -1,45 +1,8 @@
 package db
 
 import (
-	"database/sql"
 	"log"
 )
-
-// 预编译语句
-var (
-	u_search     *sql.Stmt
-	u_create     *sql.Stmt
-	u_login      *sql.Stmt
-	u_Createvote *sql.Stmt
-	u_GetName    *sql.Stmt
-)
-
-func init() {
-	var err error
-	u_search, err = dbp.Prepare(
-		`select u_id
-		from user_info
-		where u_name = ?`)
-	check(err)
-	u_create, err = dbp.Prepare(
-		`insert into user_info(u_name, u_psw)
-		values (?, ?)`)
-	check(err)
-	u_login, err = dbp.Prepare(
-		`select u_id
-		from user_info
-		where u_name = ? and u_psw = ?`)
-	check(err)
-	u_Createvote, err = dbp.Prepare(
-		`insert into vote(period_id, u_id)
-		values (?, ?)`)
-	check(err)
-	u_GetName, err = dbp.Prepare(
-		`select u_name
-		from user_info
-		where u_id = ?`)
-	check(err)
-}
 
 type DB_user struct{}
 
