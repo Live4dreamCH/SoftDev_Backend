@@ -94,8 +94,8 @@ HTTP路由为POST /CreateAct
     "Length": 2,
     "Description": "中三-1307，软工小组第一次讨论，讨论完成项目立项报告",
     "OrgPeriods":[
-        "2021-5-16 14:00",
-        "2021-5-16 19:30"
+        "2021-05-16 14:00",
+        "2021-05-16 19:30"
     ]
 }
 ```
@@ -103,7 +103,7 @@ HTTP路由为POST /CreateAct
 "ActName"不超过10个字符，"Description"不超过50个字符；
 "Length"表示活动持续几个“0.5小时”，如2表示持续1小时；
 "OrgPeriods"是发起者的可用时间的列表。时间字符串的格式见上例；此时间表示每段可用时间的起点。
-如"2021-5-16 14:00"，结合"Length": 2，可知发起者在2021-5-16 14:00到2021-5-16 15:00之间有空。
+如"2021-05-16 14:00"，结合"Length": 2，可知发起者在2021-05-16 14:00到2021-05-16 15:00之间有空。
 
 #### 响应
 
@@ -161,8 +161,8 @@ HTTP路由为POST /OrgGetAct
 {
     "Res": "OK",
     "AvlbPeriods":[
-        "2021-5-16 14:00",
-        "2021-5-16 19:30"
+        "2021-05-16 14:00",
+        "2021-05-16 19:30"
     ],
     "Votes":[
         12, 56
@@ -186,7 +186,7 @@ HTTP路由为POST /StopAct
 {
     "SessionID": "kzR__MA4E17ebfjjuic7M0GdSf_j8I-VXjGO0owm1MU=",
     "ActID": 100236,
-    "FinalPeriods": "2021-5-16 14:00"
+    "FinalPeriods": "2021-05-16 14:00"
 }
 ```
 
@@ -227,8 +227,8 @@ HTTP路由为POST /PartAct
     "SessionID": "kzR__MA4E17ebfjjuic7M0GdSf_j8I-VXjGO0owm1MU=",
     "ActID": 100236,
     "PartPeriods":[
-        "2021-5-16 14:00",
-        "2021-5-16 19:30"
+        "2021-05-16 14:00",
+        "2021-05-16 19:30"
     ]
 }
 ```
@@ -240,11 +240,15 @@ HTTP路由为POST /PartAct
 ```json
 {
     "Res": "NO",
-    "Reason": "ActID/Periods/Stopped"
+    "Reason": "ActID/Periods/Stopped/Parted"
 }
 ```
 
-"Reason"项为"ActID"时表示无此活动号，为"Periods"时表示时间格式不对/时间不在发起者规定的范畴内，为"Stopped"表示此活动已停止投票。
+"Reason"项为"ActID"时表示无此活动号，
+为"Periods"时表示时间格式不对/时间不在发起者规定的范畴内，
+为"Stopped"表示此活动已停止投票，
+为"Parted"表示此用户已参加过此活动，拒绝重复投票。
+
 
 **成功：**
 
@@ -295,8 +299,8 @@ HTTP路由为POST /GetActs
             "Length": 2,
             "Description": "中三-1307，软工小组第一次讨论，讨论完成项目立项报告",
             "OrgPeriods": [
-                "2021-5-16 14:00",
-                "2021-5-16 19:30"
+                "2021-05-16 14:00",
+                "2021-05-16 19:30"
             ],
             "Stopped": 0
         },
@@ -307,7 +311,7 @@ HTTP路由为POST /GetActs
             "Length": 2,
             "Description": "中三-1307，软工小组第二次讨论，讨论完成项目立项报告",
             "OrgPeriods": [
-                "2021-5-16 14:00"
+                "2021-05-16 14:00"
             ],
             "Stopped": 1
         }
@@ -359,8 +363,8 @@ HTTP路由为POST /GetAct
         "Length": 2,
         "Description": "中三-1307，软工小组第一次讨论，讨论完成项目立项报告",
         "OrgPeriods": [
-            "2021-5-16 14:00",
-            "2021-5-16 19:30"
+            "2021-05-16 14:00",
+            "2021-05-16 19:30"
         ],
         "Stopped": 0
     }

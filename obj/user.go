@@ -82,7 +82,7 @@ func (u *User) PartAct(uid int, ActID int, PartPeriods []string) (suss bool, msg
 	err = dbu.CreateVote(uid, ActID, PartPeriodID)
 	if err != nil {
 		log.Println("ActID", ActID, "cannot add voter", uid)
-		msg = "insert fail" //"ActID not found"
+		msg = "Parted"
 		return
 	}
 	suss = true
