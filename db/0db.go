@@ -77,8 +77,9 @@ func init() {
 	check(err)
 	a_search_vote, err = dbp.Prepare(
 		`select org_period, count(u_id)
-		from act_period,vote
-		where act_id=? and act_period.period_id=vote.period_id
+		from act_period left outer join vote 
+			on act_period.period_id=vote.period_id
+		where act_id=?
 		group by org_period`)
 	check(err)
 
