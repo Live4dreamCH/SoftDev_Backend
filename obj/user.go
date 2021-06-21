@@ -88,3 +88,13 @@ func (u *User) PartAct(uid int, ActID int, PartPeriods []string) (suss bool, msg
 	suss = true
 	return
 }
+
+func (u *User) GetName(uid int) (name string) {
+	var dbu db.DB_user
+	name, err := dbu.GetName(uid)
+	if err != nil {
+		log.Println(err)
+		name = "unknown"
+	}
+	return
+}

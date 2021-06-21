@@ -30,7 +30,7 @@ func get_aid() int {
 
 func (a *Act) GetAct(act_id int) (suss bool, act Act) {
 	var dba db.DB_act
-	act_stop, act_len, org_id, act_des, act_name, err := dba.ActinfoQuery(act_id)
+	act_stop, act_len, org_id, act_des, act_name, act_final, err := dba.ActinfoQuery(act_id)
 	if err != nil {
 		return
 	}
@@ -40,27 +40,30 @@ func (a *Act) GetAct(act_id int) (suss bool, act Act) {
 	act.Uid = org_id
 	act.Name = act_name
 	act.Stop = act_stop
-	period, err := dba.PeriodQuery(act_id)
-	if err != nil {
+	if act_stop {
+		act.Period = append(act.Period, act_final)
+		suss = true
+		return
+	} else {
+		period, err := dba.PeriodQuery(act_id)
+		if err != nil {
+			return
+		}
+		act.Period = make([]string, len(period))
+		i := 0
+		for p := range period {
+			act.Period[i] = p
+			i++
+		}
+		suss = true
 		return
 	}
-	act.Period = make([]string, len(period))
-	i := 0
-	for p := range period {
-		act.Period[i] = p
-		i++
-	}
-	suss = true
-	return
 }
 
 func (a *Act) GetActs(uid int) (suss bool, actlist []Act) {
 	var i int
-	//var num int
 	var actidlist []int
-	//var tempint int
 	var tempact Act
-	//num = 0
 	var dbu db.DB_act
 	actidlist, err := dbu.OnepersonActQuery(uid) //act_len
 	if err != nil {
@@ -68,13 +71,12 @@ func (a *Act) GetActs(uid int) (suss bool, actlist []Act) {
 		suss = false
 		return
 	}
-	//num = 0
 	for i = 0; i < len(actidlist); i++ {
 		suss, tempact = a.GetAct(actidlist[i])
-		actlist = append(actlist, tempact)
 		if !suss {
 			return
 		}
+		actlist = append(actlist, tempact)
 	}
 	suss = true
 	return

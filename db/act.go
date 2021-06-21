@@ -17,13 +17,18 @@ var (
 func init() {
 	var err error
 	a_searchall, err = dbp.Prepare(
-		`select act_stop,act_len,org_id,act_des,act_name
+		`select act_stop,act_len,org_id,act_des,act_name, act_final
 		from act
 		where act.act_id = ?`)
 	check(err)
-	a_searchact, err = dbp.Prepare(`select distinct act_id
+	a_searchact, err = dbp.Prepare(
+		`select act_id
 		from act_period,vote
-		where u_id = ? and act_period.period_id = vote.period_id`)
+		where u_id = ? and act_period.period_id = vote.period_id
+		union
+		select act_id
+		from act
+		where org_id = ?`)
 	check(err)
 	a_findact, err = dbp.Prepare(
 		`select act_stop,act_len
@@ -44,21 +49,23 @@ func init() {
 
 type DB_act struct{}
 
-func (a *DB_act) ActinfoQuery(ActID int) (act_stop bool, act_len int, org_id int, act_des string, act_name string, err error) {
-	err = a_searchall.QueryRow(ActID).Scan(&act_stop, &act_len, &org_id, &act_des, &act_name)
+func (a *DB_act) ActinfoQuery(ActID int) (act_stop bool, act_len int, org_id int, act_des string, act_name string, act_final string, err error) {
+	var null_act_final sql.NullString
+	err = a_searchall.QueryRow(ActID).Scan(&act_stop, &act_len, &org_id, &act_des, &act_name, &null_act_final)
+	if act_stop {
+		act_final = null_act_final.String
+	}
 	if err != nil {
 		log.Println(err)
-		return act_stop, act_len, org_id, act_des, act_name, err
+		return
 	}
 	return
 }
 
 func (a *DB_act) OnepersonActQuery(uid int) (actidlist []int, err error) {
-	//var num int = 0
-	rows, newerr := a_searchact.Query(uid)
-	if newerr != nil {
-		log.Println(newerr)
-		err = newerr
+	rows, err := a_searchact.Query(uid, uid)
+	if err != nil {
+		log.Println(err)
 		return
 	}
 	defer rows.Close()

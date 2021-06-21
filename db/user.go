@@ -11,6 +11,7 @@ var (
 	u_create     *sql.Stmt
 	u_login      *sql.Stmt
 	u_Createvote *sql.Stmt
+	u_GetName    *sql.Stmt
 )
 
 func init() {
@@ -33,15 +34,17 @@ func init() {
 		`insert into vote(period_id, u_id)
 		values (?, ?)`)
 	check(err)
+	u_GetName, err = dbp.Prepare(
+		`select u_name
+		from user_info
+		where u_id = ?`)
+	check(err)
 }
 
 type DB_user struct{}
 
 func (u *DB_user) Search(name string) (u_id int, err error) {
 	err = u_search.QueryRow(name).Scan(&u_id)
-	if err != nil {
-		return
-	}
 	return
 }
 
@@ -78,5 +81,10 @@ func (u *DB_user) CreateVote(uid int, ActID int, Periodid []int) (err error) {
 			return
 		}
 	}
+	return
+}
+
+func (u *DB_user) GetName(uid int) (name string, err error) {
+	err = u_GetName.QueryRow(uid).Scan(&name)
 	return
 }
